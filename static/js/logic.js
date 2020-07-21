@@ -33,18 +33,18 @@ d3.json(queryUrl, function (data) {
     }
     function color(magnitude) {
         switch (true) {
-            case magnitude > 5:
-                return 'red';
-            case magnitude > 4:
-                return 'orange';
-            case magnitude > 3:
-                return 'green';
-            case magnitude > 2:
-                return 'blue';
-            case magnitude > 1:
-                return 'grey';
+            case magnitude >= 5:
+                return '#EA2C2C';
+            case magnitude >= 4:
+                return '#EA822C';
+            case magnitude >= 3:
+                return '#EE9C00';
+            case magnitude >= 2:
+                return '#EECC00';
+            case magnitude >= 1:
+                return '#D4EE00';
             default:
-                return 'black';
+                return '#98EE00';
 
         }
     }
@@ -53,31 +53,26 @@ d3.json(queryUrl, function (data) {
         return {
             fillColor: color(feature.properties.mag),
             radius: radius(feature.properties.mag),
-            fillOpacity: 0.5,
-            weight: 1.5,
+            fillOpacity: 1,
+            weight: 0.5,
             stroke: true
         };
     }
 
-    // Give each feature a popup describing the place and time of the earthquake
-    function onEachFeature(feature, layer) {
-        layer.bindPopup("<h3>" + feature.properties.place +
-            "</h3><hr><p>" + new Date(feature.properties.time) + "</p>");
-    }
     // Add legend to the map
     var legend = L.control({ position: 'bottomright' });
 
     legend.onAdd = function (map) {
 
         var div = L.DomUtil.create('div', 'info legend'),
-            mags = [0, 1, 2, 3, 4, 5],
-            labels = [];
-
+            mags = [0, 1, 2, 3, 4, 5];
+            
         // loop through our density intervals and generate a label with a colored square for each interval
         for (var i = 0; i < mags.length; i++) {
+
             div.innerHTML +=
-                '<i style="background:' + color(mags[i] + 1) + '"></i> ' +
-                mags[i] + (mags[i + 1] ? '&ndash;' + mags[i + 1] + '<br>' : '+');
+                "<i style='background:" + color(mags[i])  + "'></i> " +
+                mags[i] + (mags[i + 1] ? "&ndash;" + mags[i + 1] + "<br>" : "+");
         }
 
         return div;
@@ -86,6 +81,11 @@ d3.json(queryUrl, function (data) {
     legend.addTo(myMap);
     
     var earthquakeLayer = L.geoJSON(data, {
+
+        pointToLayer: function (feature, latlng){
+            return L.circleMarker(latlng);
+        }, 
+        style: circleStyle,
         onEachFeature: function (feature, layer) {
             layer.bindPopup(`<h3>${feature.properties.place}</h3><hr/><p>${feature.properties.mag}</p>`)
         }
