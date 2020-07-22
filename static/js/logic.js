@@ -66,12 +66,12 @@ d3.json(queryUrl, function (data) {
 
         var div = L.DomUtil.create('div', 'info legend'),
             mags = [0, 1, 2, 3, 4, 5];
-            
+
         // loop through our density intervals and generate a label with a colored square for each interval
         for (var i = 0; i < mags.length; i++) {
 
             div.innerHTML +=
-                "<i style='background:" + color(mags[i])  + "'></i> " +
+                "<i style='background:" + color(mags[i]) + "'></i> " +
                 mags[i] + (mags[i + 1] ? "&ndash;" + mags[i + 1] + "<br>" : "+");
         }
 
@@ -79,19 +79,19 @@ d3.json(queryUrl, function (data) {
     };
 
     legend.addTo(myMap);
-    
+
     var earthquakeLayer = L.geoJSON(data, {
 
-        pointToLayer: function (feature, latlng){
+        pointToLayer: function (feature, latlng) {
             return L.circleMarker(latlng);
-        }, 
+        },
         style: circleStyle,
+         // Give each feature a popup describing with information pertinent to it
         onEachFeature: function (feature, layer) {
             layer.bindPopup(`<h3>${feature.properties.place}</h3><hr/><p>${feature.properties.mag}</p>`)
         }
     })
 
     earthquakeLayer.addTo(myMap);
-
-
+    
 });
